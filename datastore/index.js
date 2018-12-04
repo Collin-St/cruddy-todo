@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('underscore');
 const counter = require('./counter');
-
 var items = {};
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
@@ -24,18 +23,28 @@ exports.create = (text, callback) => {
       });
     }
   });
-
+  // console.log('ITEMS ARE HERE ----> ', data)
   // items[id] = text;
 
 };
 
 exports.readAll = (callback) => {
   var data = [];
-  _.each(items, (text, id) => {
-    data.push({});
-  });
-  callback(null, data);
-  console.log(data)
+  
+  fs.readdir(exports.dataDir, (err, files) => {
+    if (err) {
+      throw err;
+    } else {
+    files.forEach(file => {
+      var sliced = file.slice(0, file.length - 4).toString();
+      data.push({'id': sliced, 'text': sliced});
+      // console.log('###########', sliced);
+    })
+    callback(null, data);
+    }
+  })
+
+  // callback(null, data);
 };
 
 exports.readOne = (id, callback) => {
